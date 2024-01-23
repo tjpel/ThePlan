@@ -1,3 +1,4 @@
-pandas
+supabase
 streamlit
 datetime
+decouple
