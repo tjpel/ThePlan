@@ -2,7 +2,9 @@ import streamlit as st
 import pandas as pd
 from datetime import date
 
-checkin_df = pd.read_csv('../checkins.csv')
+CHECKIN_CSV_PATH = 'data/checkins.csv'
+
+checkin_df = pd.read_csv(CHECKIN_CSV_PATH)
 
 st.title("Daily Check-in!")
 today = date.today().strftime("%d/%m/%Y")
@@ -13,9 +15,8 @@ with st.form(key='daily_checkin'):
 
     checkin_submitted = st.form_submit_button("Submit")
     if checkin_submitted:
-        checkin_row = pd.Dataframe({'Date': [today], 'Rating': [mental_health]})
-        checkin_df = checkin_df | checkin_row
-        checkin_df.to_csv('../checkins.csv')
+        checkin_df.loc[len(checkin_df.index)] = [today, mental_health]
+        checkin_df.to_csv(CHECKIN_CSV_PATH, index=False)
 
 with st.form(key="gym"):
     gym_activity = st.radio("What did you do today?", [
