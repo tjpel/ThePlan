@@ -3,5 +3,5 @@ import pandas
 from datetime import date
 
 st.title("Daily Check-in!")
-today = date.today()
-st.subheader("Today's Date is:", str(today))
+today = date.today().strftime("%d/%m/%Y")
+st.subheader("Today's Date is:", today)
