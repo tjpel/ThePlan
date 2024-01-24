@@ -92,11 +92,6 @@ with st.form(key="gym"):
 #TODO: make so this only comes up when there's an expense
         #ALT: just do calc and display on landing page
 with st.form(key="finances"):
-    ft = conn.table('finances')
-    data = conn.table('finances').select('*').execute().data
-    st.write(data)
-    st.write(dateToString(today))
-    st.write(dateToString(yesterday))
     data = conn.table('finances').select('*').eq('date', dateToString(yesterday)).execute().data
     st.write(data)
     fyester = data[0]
