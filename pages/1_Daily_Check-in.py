@@ -18,7 +18,7 @@ yesterday = today - timedelta(days = 1)
 yester2day = yesterday - timedelta(days = 1)
 monthago = today - timedelta(days = 30)
 
-def dateToString(date: date):
+def dateToString(date: datetime):
     return date.strftime(r"%Y/%m/%d")  
 
 def checkPreviousMH(level:int, max: int):
