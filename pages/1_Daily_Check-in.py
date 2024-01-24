@@ -15,7 +15,7 @@ conn = st.connection("supabase", type=SupabaseConnection)
 
 today = datetime.now(tz=timezone(-timedelta(hours=6)))
 yesterday = today - timedelta(days = 1)
-yester2day = yesterday - timedelta(days = 1)
+yester2day = today - timedelta(days = 2)
 monthago = today - timedelta(days = 30)
 
 def dateToString(date: datetime):
@@ -60,14 +60,6 @@ st.subheader("Today's Date is: " + dateToString(today))
 with st.form(key='daily_checkin'):
     mental_health = st.slider("How was your mental health today?", 1, 5, value=3)
 
-    checkin_submitted = st.form_submit_button("Submit")
-    if checkin_submitted:
-        conn.table('checkin').insert({
-            "date": dateToString(today),
-            "rating": mental_health
-        }).execute()
-
-with st.form(key="gym"):
     gym_activity = st.radio("What did you do today?", [
         "Stuck to The Plan",
         "Active, but not in line with The Plan",
@@ -78,36 +70,30 @@ with st.form(key="gym"):
     gym_caloriesBurned = st.number_input("Number of Calories burned", step=1)
     gym_caloriesConsumed = st.number_input("Number of Calories consumed", step=1)
 
-    gym_submitted = st.form_submit_button("Submit")
-    if gym_submitted:
-        conn.table('gym').insert({
-            "date": dateToString(today),
-            "activity": gym_activity,
-            "minutes": gym_minutes,
-            "caloriesBurned": gym_caloriesBurned,
-            "caloriesConsumed": gym_caloriesConsumed
-        }).execute()
-        pointsCalculation()
-
-#TODO: make so this only comes up when there's an expense
-        #ALT: just do calc and display on landing page
-with st.form(key="finances"):
     data = conn.table('finances').select('*').eq('date', dateToString(yesterday)).execute().data
-    st.write(data)
+    #st.write(data)
     fyester = data[0]
-
+    with st.form(key='expenses'):
+        exp_category = st.selectbox(
+            "What category did your expense fall under?",
+            ('Rent', 'Groceries', 'Fun', 'Loans')
+        )
+    """
     st.write("Have any of these changed?")
     usgensp = st.number_input("U.S. Bank General Spending", value=fyester['usgensp'], step=0.01)
     usfunsp = st.number_input("U.S. Bank Fun Spending", value=fyester['usfunsp'], step=0.01)
     ussav = st.number_input("U.S. Bank Savings", value=fyester['ussav'], step=0.01)
     acorns = st.number_input("Acorns", value=fyester['acorns'], step=0.01)
-    
+    """
 
     #TODO: code to prompt for loans balance and IRA from army
 
-    fin_submitted = st.form_submit_button("Submit")
-    if fin_submitted:
-        st.write("Accessable Funds: $" + str(round(usgensp+usfunsp+ussav+acorns, 2)))
+    checkin_submitted = st.form_submit_button("Submit")
+    if checkin_submitted:
+        conn.table('checkin').insert({
+            "date": dateToString(today),
+            "rating": mental_health
+        }).execute()
 
 
 with st.form(key="purge_day"):
@@ -115,3 +101,5 @@ with st.form(key="purge_day"):
     if purge_submitted:
         for table in ["checkin", "goodboypoints", "gym"]:
             conn.table(table).delete().eq("date", dateToString(today)).execute()
+
+    
