@@ -1,16 +1,17 @@
 import streamlit as st
 from datetime import date, timedelta
-from supabase import create_client, Client
-from dotenv import load_dotenv
-import os
+#from supabase import create_client, Client
+from st_supabase_connection import SupabaseConnection
+#import os
 
 #TODO: make one big form?
 #TODO: change yesterdays to last entry, will break if no entry for yesterday
-load_dotenv(".env")
-SUPABASE_URL = os.environ['sb_url']
-SUPABASE_KEY = os.environ['sb_key']
+#load_dotenv(".env")
+#SUPABASE_URL = os.environ['sb_url']
+#SUPABASE_KEY = os.environ['sb_key']
 
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+#supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+conn = st.connection("supabase", type=SupabaseConnection)
 
 today = date.today()
 yesterday = today - timedelta(days = 1)
@@ -21,7 +22,7 @@ def dateToString(date: date):
     return date.strftime(r"%Y/%m/%d")  
 
 def checkPreviousMH(level:int, max: int):
-    data, count = supabase.table('checkin').select('rating').lt('date', dateToString(today)).gt('date', dateToString(monthago)).eq('rating', level).execute()
+    data, count = conn.table('checkin').select('rating').lt('date', dateToString(today)).gt('date', dateToString(monthago)).eq('rating', level).execute()
     print(len(data[1]))
     return len(data[1]) < max
 
@@ -43,13 +44,13 @@ def pointsCalculation():
         elif mental_health == 2 and checkPreviousMH(2, 4):
             points = points // 2
 
-    goodboytable = supabase.table('goodboypoints')
+    goodboytable = conn.table('goodboypoints')
 
-    data, count = goodboytable.select('*').eq('date', dateToString(yesterday)).execute()
-    data, count = goodboytable.insert({
+    gbtYester = goodboytable.select('*').eq('date', dateToString(yesterday)).execute().data
+    goodboytable.insert({
         "date": dateToString(today),
         "todaysPoints": points,
-        "culmPoints": data[1][0]['culmPoints'] + points
+        "culmPoints": gbtYester[0]['culmPoints'] + points
         }).execute()
 
 
@@ -61,10 +62,10 @@ with st.form(key='daily_checkin'):
 
     checkin_submitted = st.form_submit_button("Submit")
     if checkin_submitted:
-        data, count = supabase.table('checkin').insert({
+        conn.table('checkin').insert({
             "date": dateToString(today),
             "rating": mental_health
-            }).execute()
+        }).execute()
 
 with st.form(key="gym"):
     gym_activity = st.radio("What did you do today?", [
@@ -79,7 +80,7 @@ with st.form(key="gym"):
 
     gym_submitted = st.form_submit_button("Submit")
     if gym_submitted:
-        data, count = supabase.table('gym').insert({
+        conn.table('gym').insert({
             "date": dateToString(today),
             "activity": gym_activity,
             "minutes": gym_minutes,
@@ -91,9 +92,10 @@ with st.form(key="gym"):
 #TODO: make so this only comes up when there's an expense
         #ALT: just do calc and display on landing page
 with st.form(key="finances"):
-    ft = supabase.table('finances')
-    data, count = ft.select('*').eq('date', dateToString(yesterday)).execute()
-    fyester = data[1][0]
+    ft = conn.table('finances')
+    res = ft.select('*').eq('date', dateToString(yesterday)).execute()
+    print(res.data)
+    fyester = res.data[0]
 
     st.write("Have any of these changed?")
     usgensp = st.number_input("U.S. Bank General Spending", value=fyester['usgensp'], step=0.01)
@@ -113,4 +115,4 @@ with st.form(key="purge_day"):
     purge_submitted = st.form_submit_button("Purge Today")
     if purge_submitted:
         for table in ["checkin", "goodboypoints", "gym"]:
-            data, count = supabase.table(table).delete().eq("date", dateToString(today)).execute()
+            conn.table(table).delete().eq("date", dateToString(today)).execute()
