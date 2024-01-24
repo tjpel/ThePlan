@@ -93,6 +93,8 @@ with st.form(key="gym"):
         #ALT: just do calc and display on landing page
 with st.form(key="finances"):
     ft = conn.table('finances')
+    data = ft.select('*').execute().data
+    st.write(data)
     data = ft.select('*').eq('date', dateToString(yesterday)).execute().data
     st.write(data)
     fyester = data[0]
