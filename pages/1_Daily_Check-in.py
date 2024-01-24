@@ -93,9 +93,9 @@ with st.form(key="gym"):
         #ALT: just do calc and display on landing page
 with st.form(key="finances"):
     ft = conn.table('finances')
-    res = ft.select('*').eq('date', dateToString(yesterday)).execute()
-    print(res.data)
-    fyester = res.data[0]
+    data = ft.select('*').eq('date', dateToString(yesterday)).execute().data
+    print(data)
+    fyester = data[0]
 
     st.write("Have any of these changed?")
     usgensp = st.number_input("U.S. Bank General Spending", value=fyester['usgensp'], step=0.01)
