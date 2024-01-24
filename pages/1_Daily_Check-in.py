@@ -22,9 +22,9 @@ def dateToString(date: date):
     return date.strftime(r"%Y/%m/%d")  
 
 def checkPreviousMH(level:int, max: int):
-    data, count = conn.table('checkin').select('rating').lt('date', dateToString(today)).gt('date', dateToString(monthago)).eq('rating', level).execute()
-    print(len(data[1]))
-    return len(data[1]) < max
+    data = conn.table('checkin').select('rating').lt('date', dateToString(today)).gt('date', dateToString(monthago)).eq('rating', level).execute().data
+    print(len(data))
+    return len(data) < max
 
 
 def pointsCalculation():
