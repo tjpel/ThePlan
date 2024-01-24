@@ -1,5 +1,5 @@
 import streamlit as st
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 #from supabase import create_client, Client
 from st_supabase_connection import SupabaseConnection
 #import os
@@ -13,7 +13,7 @@ from st_supabase_connection import SupabaseConnection
 #supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 conn = st.connection("supabase", type=SupabaseConnection)
 
-today = datetime.now(tz=datetime.timezone(-timedelta(hours=6)))
+today = datetime.now(tz=timezone(-timedelta(hours=6)))
 yesterday = today - timedelta(days = 1)
 yester2day = yesterday - timedelta(days = 1)
 monthago = today - timedelta(days = 30)
