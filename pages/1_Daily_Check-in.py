@@ -70,14 +70,6 @@ with st.form(key='daily_checkin'):
     gym_caloriesBurned = st.number_input("Number of Calories burned", step=1)
     gym_caloriesConsumed = st.number_input("Number of Calories consumed", step=1)
 
-    data = conn.table('finances').select('*').eq('date', dateToString(yesterday)).execute().data
-    #st.write(data)
-    fyester = data[0]
-    with st.form(key='expenses'):
-        exp_category = st.selectbox(
-            "What category did your expense fall under?",
-            ('Rent', 'Groceries', 'Fun', 'Loans')
-        )
     """
     st.write("Have any of these changed?")
     usgensp = st.number_input("U.S. Bank General Spending", value=fyester['usgensp'], step=0.01)
@@ -94,6 +86,19 @@ with st.form(key='daily_checkin'):
             "date": dateToString(today),
             "rating": mental_health
         }).execute()
+
+data = conn.table('finances').select('*').eq('date', dateToString(yesterday)).execute().data
+#st.write(data)
+fyester = data[0]
+with st.form(key='expenses'):
+    exp_category = st.selectbox(
+        "What category did your expense fall under?",
+        ('Rent', 'Groceries', 'Fun', 'Loans')
+    )
+
+    exp_submitted = st.form_submit_button("Submit")
+    if exp_submitted:
+        pass
 
 
 with st.form(key="purge_day"):
