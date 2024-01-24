@@ -95,8 +95,8 @@ with st.form(key="finances"):
     ft = conn.table('finances')
     data = ft.select('*').execute().data
     st.write(data)
-    st.write(today)
-    st.write(yesterday)
+    st.write(dateToString(today))
+    st.write(dateToString(yesterday))
     data = ft.select('*').eq('date', dateToString(yesterday)).execute().data
     st.write(data)
     fyester = data[0]
