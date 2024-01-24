@@ -94,7 +94,7 @@ with st.form(key="gym"):
 with st.form(key="finances"):
     ft = conn.table('finances')
     data = ft.select('*').eq('date', dateToString(yesterday)).execute().data
-    print(data)
+    st.write(data)
     fyester = data[0]
 
     st.write("Have any of these changed?")
