@@ -9,11 +9,12 @@ from st_supabase_connection import SupabaseConnection
 #load_dotenv(".env")
 #SUPABASE_URL = os.environ['sb_url']
 #SUPABASE_KEY = os.environ['sb_key']
+LIVE = True
 
 #supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 conn = st.connection("supabase", type=SupabaseConnection)
 
-today = date.today()
+today = date.today() - (timedelta(hours=6) if LIVE else 0)
 yesterday = today - timedelta(days = 1)
 yester2day = yesterday - timedelta(days = 1)
 monthago = today - timedelta(days = 30)
