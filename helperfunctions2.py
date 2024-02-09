@@ -75,8 +75,8 @@ def pointsCalculation(client, points, gym_activity, mental_health):
         elif mental_health == 2 and checkPreviousMH(2, 4):
             points = points // 2
 
-    gbtYester = getRecentRow(client, 'goodboypoints')
-    client.collection('goodboypoints').add({
+    gbtYester = getRecentRow(client, 'points')
+    client.collection('points').add({
         "date": dateToString(today),
         "todaysPoints": points,
         "culmPoints": gbtYester['culmPoints'] + points

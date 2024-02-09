@@ -55,15 +55,15 @@ with st.form(key='expenses'):
         gbp += subtractExpenses(db, exp_cc, exp_category, exp_amt, exp_notes)
 
 with st.form(key='gbp'):
-    gbp_submitted = st.form_submit_button("Tally Good Boy Points!")
+    gbp_submitted = st.form_submit_button("Tally Points!")
     if gbp_submitted:
         gbp = pointsCalculation(db, gbp, gym_activity, mental_health)
-        st.write(f"You got {gbp} good boy points today!")
+        st.write(f"You got {gbp} points today!")
 
 with st.form(key="purge_day"):
     purge_submitted = st.form_submit_button("Purge Today")
     if purge_submitted:
-        for table in ["checkin", "goodboypoints", "gym", "finances", "expenses"]:
+        for table in ["checkin", "points", "gym", "finances", "expenses"]:
             data = db.collection(table).where('date', '==', dateToString(today)).get()
             for row in data:
                 row._reference.delete()

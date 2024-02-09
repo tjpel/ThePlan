@@ -1,4 +1,12 @@
 import streamlit as st
-#from supabase import create_client, Client
+import moneySplitter as ms
+from google.cloud import firestore
+from google.oauth2 import service_account
+import json
+from helperfunctions2 import *
 
-st.title("Text")
+key_dict = json.loads(st.secrets['textkey'])
+creds = service_account.Credentials.from_service_account_info(key_dict)
+db = firestore.Client(credentials=creds)
+
+st.title(ms.splitIncome(db, 100))

@@ -1,3 +1,5 @@
 google-cloud-firestore
 streamlit
 datetime
+json
+google-auth
